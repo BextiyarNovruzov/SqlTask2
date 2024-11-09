@@ -1,0 +1,145 @@
+/*
+1.
+ Users cədvəli :
+ - Username
+ - Password
+Roles cədvəli :
+ - Name
+Users cədvəli ilə Roles cədvəli arasında relation qurun.
+Hər userin 1 rolu ola bilər.(Misal: Admin, Moderator ve s.)
+
+
+Usersleri rollari ile bir yerde cixaran sorgu yazin
+*/
+Use BP215
+
+
+Create table Roles 
+(
+ID int primary key identity(1,1),
+RoleName nvarchar(20) not null unique
+)
+Insert into Roles (RoleName) VALUES
+('Admin'),
+('Editor'),
+('Moderator'),
+('Subscriber'),
+('Guest')
+
+
+Create table Users
+(
+ID int primary key identity(1,1),
+Username nvarchar(20) not null unique,
+UserPassword nvarchar(20) not null unique,
+RoleID int foreign key references Roles(ID)
+)
+Insert into Users (Username, UserPassword, RoleID) 
+Values
+('Aysel', 'AyselPass123', 1),
+('Rəşad', 'RashadPass456', 2),
+('Nigar', 'NigarPass789', 3),
+('Elvin', 'ElvinPass321', 1),
+('Günay', 'GunayPass654', 2),
+('Orxan', 'OrxanPass987', 3),
+('Zaur', 'ZaurPass111', 1),
+('Sevinc', 'SevincPass222', 2),
+('Murad', 'MuradPass333', 3),
+('Leyla', 'LeylaPass444', 1)
+
+Select *from Roles
+select *from Users
+Select u.Username,r.RoleName  from Users as u
+Join Roles as r
+on u.RoleID = r.ID
+
+
+
+
+
+
+
+/*2.
+	Products cədvəli:
+	 -Name
+	 -Price
+	 -Cost
+	Categories cədvəli:
+	-Name
+	Colors cədvəli:
+	 -Name
+	Productun yalniz bir Category-i ola biler.
+	Bir mehsulun bir nece Rengi ola biler ve bir rengde bir nece mehsula aid ola bilir(Relationlari duzgun qurun). 
+*/
+
+create table Products
+(
+ID int Primary key identity(1,1),
+Name nvarchar(50) not null unique,
+Price int not null,
+Cost int not null,
+CategorieID int foreign key references Categories(ID)
+)
+ insert into Products (Name, Price, Cost, CategorieID) 
+ values
+('T-shirt', 25.00, 10.00, 1),
+('Telefon', 500.00, 300.00, 2)
+
+create table Categories
+(
+ID int primary key identity(1,1),
+Name nvarchar(50) not null unique
+)
+
+insert into Categories(Name)
+values
+ ('Geyim'),
+ ('Elektronika')
+
+create table Colors
+(
+ID int primary key identity(1,1),
+Name nvarchar(25) not null unique
+)
+insert into Colors(Name)
+values
+('Yaşıl'),
+('Mavi'),
+('Qırmızı')
+
+ create table ProductColor
+ (
+ ID int primary key identity(1,1),
+ ProductID int foreign key references Products(ID),
+ ColorID int foreign key references Colors(ID)
+ )
+
+ select * from Products order by ID
+ select * from Categories order by ID
+ select * from Colors order by ID
+ select * from ProductColor order by ID
+ insert into ProductColor(ProductID,ColorID)
+ values
+ (1,1),
+ (1,2),
+ (1,3),
+ (2,1),
+ (2,2),
+ (2,3)
+
+ /*Butun mehsullari Reng adlari ve Categori adlari ile bir yerde qaytaran sorgu yazirsiz .
+Category adlari Category Name, Color adlari Color Name sheklinde cixsin
+*/
+
+
+create view MyProducts
+as
+select p.Name as 'Product Name', c.Name as 'Category Name', Colors.Name as 'Color Name'  from Products as p
+join Categories as c
+on p.CategorieID = c.ID
+join ProductColor as pc
+on pc.ProductID = p.ID
+join Colors 
+on Colors.ID=pc.ColorID
+
+select * from MyProducts
